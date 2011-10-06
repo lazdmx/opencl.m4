@@ -1,0 +1,6 @@
+This package provides a set of M4 macros to use with GNU Autoconf.
+The purpose of these macros is to be able to easily find and test
+presence of OpenCL libraries and headers.
+
+This macro requires that you use GNU Libtool and assumes that you
+already use GNU Automake.  
