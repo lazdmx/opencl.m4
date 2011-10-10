@@ -8,6 +8,7 @@ AM_INIT_AUTOMAKE([-Werror -Wall foreign])
 
 
 # Checks for programs.
+AC_PROG_CXX
 
 # Checks for libraries.
 AC_OPENCL_CHECK([1.1])
@@ -16,5 +17,6 @@ AC_OPENCL_CHECK([1.1])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+  tests/Makefile])
 AC_OUTPUT
