@@ -12,7 +12,7 @@ m4_define([__TN_OPENCL_PROG_CHECK_APPLE_PP_FLAG],
     #ifdef __APPLE__
     #  define __EXIT_CODE 0
     #else
-    #  define __EXIT_CODE 1
+    #  dfine __EXIT_CODE 1
     #endif
     ]], 
     [[return __EXIT_CODE;]])
@@ -48,7 +48,7 @@ AC_DEFUN([TN_OPENCL_CHECK_APPLE_PP_FLAG],
   ])
   
 
-AC_DEFUN([TN_OPENCL_CHECK_HEADERS_V11],
+m4_define([TN_OPENCL_CHECK_HEADERS_V11],
   [
   TN_OPENCL_CHECK_APPLE_PP_FLAG()
 
@@ -62,16 +62,16 @@ AC_DEFUN([TN_OPENCL_CHECK_HEADERS_V11],
     [
     AC_CHECK_HEADERS([CL/opencl.h CL/cl.h])
     AS_IF(
-      [test "$ac_cv_header_cl_opencl_h" == "yes" -a \
-            "$ac_cv_header_cl_cl_h" == "yes"],
+      [test "$ac_cv_header_CL_opencl_h" == "yes" -a \
+            "$ac_cv_header_CL_cl_h" == "yes"],
       [opencl_headers_located="yes"],
       [opencl_headers_located=])
     ],
     [
     AC_CHECK_HEADERS([OpenCL/opencl.h OpenCL/cl.h])
     AS_IF(
-      [test "$ac_cv_header_opencl_opencl_h" == "yes" -a \
-            "$ac_cv_header_opencl_cl_h" == "yes"],
+      [test "$ac_cv_header_OpenCL_opencl_h" == "yes" -a \
+            "$ac_cv_header_OpenCL_cl_h" == "yes"],
       [opencl_headers_located="yes"],
       [opencl_headers_located=])
     ])
@@ -79,24 +79,23 @@ AC_DEFUN([TN_OPENCL_CHECK_HEADERS_V11],
   ])
 
 
-AC_DEFUN([TN_OPENCL_CHECK_LIBS_V11],
+m4_define([TN_OPENCL_CHECK_LIBS_V11],
   [
-  AC_REQUIRE([TN_OPENCL_CHECK_HEADERS_V11])
   AS_IF([test "$opencl_headers_located" == "yes" -a \
-              "$1" != ""],
+              "x[]$1" != "x"],
     [
     opencl_cl_libs=
     opencl_cl_libs_path=
     opencl_libraries_located=
-
-    AS_IF([test -d $2],
+    AS_IF([test  "x$2" != "x" -a -d "$2"],
       [opencl_cl_libs_path="-L$2"])
   
     opencl_save_CPPFLAGS=$CPPFLAGS
     CPPFLAGS="$CPPFLAGS $opencl_cl_flags $opencl_cl_libs_path"
 
     opencl_save_LIBS=$LIBS
-    LIBS="-l$1 $opencl_save_LIBS"
+    LIBS="-l[]$1 $opencl_save_LIBS"
+    echo $LIBS
 
     AC_LANG_PUSH([C])
     AC_LINK_IFELSE([__TN_OPENCL_PROG_CHECK_CL_V11],
@@ -163,6 +162,8 @@ m4_define([TN_OPENCL_CHECK_NVIDIA_V10],
     AC_MSG_ERROR([Not implemented yet.])
     ])
 
+m4_define([__TN_OPENCL_NVIDIA_LIBS_V11], [clparser])
+
 m4_define([TN_OPENCL_CHECK_NVIDIA_V11], 
     [
     dnl Checks for headers. 
@@ -170,14 +171,15 @@ m4_define([TN_OPENCL_CHECK_NVIDIA_V11],
 
     AS_IF(
       [test "$opencl_headers_located" == "yes"],
-      [TN_OPENCL_CHECK_LIBS_NVIDIA_V11([$2])])
+      [TN_OPENCL_CHECK_LIBS_V11(
+        [__TN_OPENCL_NVIDIA_LIBS_V11], [$2])])
 
     AS_IF(
       [test "$opencl_headers_located" == "yes" -a \
             "$opencl_libraries_located" == "yes"],
       [
-      AC_SUBST([CL_FLAGS], [$opencl_cl_flags])
-      AC_SUBST([CL_LIBS], [$opencl_cl_libs])
+      AC_SUBST([CL_FLAGS], ["$opencl_cl_flags -L$opencl_cl_libs_path"])
+      AC_SUBST([CL_LIBS], ["$opencl_cl_libs"])
       ])
     ])
 

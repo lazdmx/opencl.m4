@@ -50,7 +50,7 @@ dnl AC_OPENCL_CHECK([1.1], [], [])
 TN_OPENCL_CHECK([1.1],
   [$with_opencl],
   [$with_opencl_inc],
-  [$with_opecnl_lib])
+  [$with_opencl_lib])
 
 # Checks for header files.
 
