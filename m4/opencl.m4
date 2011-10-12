@@ -47,10 +47,42 @@ AC_DEFUN([TN_OPENCL_CHECK_APPLE_PP_FLAG],
     ])
   ])
   
+m4_define([CHECK_HEADERS],
+  [$1[]m4_ifnblank([$1], [$0(m4_shift($@))], [end])])
+
+
+
+
+m4_define([TN_OPENCL_CHECK_HEADERS_2],
+  [
+  m4_ifnblank([$1], 
+  [AC_HEADER_CHECK([$1], [$0(m4_shift($@))],
+  [opencl_headers_located=no])])])
+  ])
+
+
+m4_define([TN_OPENCL_CHECK_HEADERS],
+[m4_indir(
+  [AC_DEFUN],
+  m4_toupper([TN_OPENCL_CHECK_HEADERS_$2_V$1]),
+  [
+  AS_IF([test -d $1],
+    [opencl_cl_flags="-I$1"],
+    [opencl_cl_flags=])
+  
+  opencl_save_CPPFLAGS=$CPPFLAGS
+  CPPFLAGS="$CPPFLAGS $opencl_cl_flags"
+  TN_OPENCL_CHECK_HEADERS_2(m4_shift(m4_shift($@)))
+  ])
+])
+
 
 m4_define([TN_OPENCL_CHECK_HEADERS_V11],
   [
   TN_OPENCL_CHECK_APPLE_PP_FLAG()
+  echo "ThRe"
+  CHECK_HEADERS_2([memory.h], [test2.h], [test3.h])
+
 
   AS_IF([test -d $1],
     [opencl_cl_flags="-I$1"],
@@ -146,6 +178,24 @@ AC_DEFUN([TN_OPENCL_CHECK],
     [AC_MSG_ERROR([Invalid OpenCL vendor name provided.])])
   ])
 
+m4_define([TN_OPENCL_DEFUN],
+  [
+  m4_indir([AC_DEFUN],
+    m4_toupper(TN_OPENCL_CHECK_$1_$2_V$3),
+    [
+    TN_OPENCL_HEADERS_CHECK_[]$1[]_[]$2[]_V[]$3
+    TN_OPENCL_LIBS_CHECK_[]$1[]_[]$2[]_V[]$3
+    ]
+  ])
+
+m4_define([TN_OPENCL_HEADERS_CHECK_DEFUN],
+  [
+  m4_indir([AC_DEFUN],
+    m4_toupper([TN_OPENCL_HEADERS_CHECK_$1_$2_V$3]),
+    $4)
+  ])
+
+
 
 m4_define([TN_OPENCL_CHECK_NVIDIA],
   [
@@ -163,11 +213,15 @@ m4_define([TN_OPENCL_CHECK_NVIDIA_V10],
     ])
 
 m4_define([__TN_OPENCL_NVIDIA_LIBS_V11], [clparser])
+TN_OPENCL_CHECK_HEADERS([11], [LINUX], [CL/opencl.h], [CL/cl.h])
 
 m4_define([TN_OPENCL_CHECK_NVIDIA_V11], 
     [
     dnl Checks for headers. 
-    TN_OPENCL_CHECK_HEADERS_V11([$1])
+    dnl TN_OPENCL_CHECK_HEADERS_V11([$1])
+    TN_OPENCL_CHECK_HEADERS_LINUX_V11()
+    echo here
+
 
     AS_IF(
       [test "$opencl_headers_located" == "yes"],
