@@ -4,6 +4,10 @@ m4_define([TN_OPENCL_CONST_V11], [1.1])
 m4_define([TN_OPENCL_CONST_NVIDIA], [nv])
 m4_define([TN_OPENCL_CONST_INTEL], [intel])
 
+
+
+
+
 dnl --=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--=--= 
 m4_define([AC_WITH_OPENCL_HELP_STRING],
   [points to the need to check system for installed OpenCL \
@@ -108,26 +112,16 @@ m4_define([TN_OPENCL_CHECK_HEADERS_DEFUN],
 m4_define([TN_OPENCL_CHECK_HEADERS_DO],
   [m4_indir(m4_toupper([TN_OPENCL_CHECK_HEADERS_$2_V$1]))])
 
-TN_OPENCL_CHECK_HEADERS_DEFUN([11], [LINUX], 
-  [opencl.h], 
-  [cl.h])
 
 
 m4_define([TN_OPENCL_LIB_LIST_DEFUN],
   [m4_define(m4_toupper([TN_OPENCL_LIB_LIST_$3_$2_V$1]),
-    [m4_map_sep([m4_echo], [ ], [m4_shift3($@)])])])
+    [m4_shift3($@)])])
 
 
 m4_define([TN_OPENCL_LIB_LIST],
   [m4_indir(m4_toupper([TN_OPENCL_LIB_LIST_$3_$2_V$1]))])
 
-
-TN_OPENCL_LIB_LIST_DEFUN([11], [NVIDIA], [LINUX], 
-  [OpenCL], 
-  [CL])
-
-TN_OPENCL_LIB_LIST_DEFUN([11], [INTEL], [LINUX],
-  [intelocl])
 
 
 m4_define([TN_OPENCL_CHECK_LIBS_DEFUN],
@@ -148,17 +142,22 @@ m4_define([TN_OPENCL_CHECK_LIBS_DEFUN],
       opencl_save_LIBS=$LIBS
 
       AC_LANG_PUSH([C])
-      for cl_lib in TN_OPENCL_LIB_LIST([$1], [$2], [LINUX])
-        do
-        LIBS="-l$cl_lib $opencl_save_LIBS"
 
-        AC_LINK_IFELSE([__TN_OPENCL_PROG_CHECK_CL_V11],
-          [
-          opencl_cl_libs=$cl_lib
-          opencl_libraries_located="yes"
-          break
-          ])
-	done
+      m4_foreach([libs], TN_OPENCL_LIB_LIST([$1], [$2], [LINUX]),
+        [
+	AS_IF([test "$opencl_libraries_located" != "yes"],
+	  [
+          cl_libs="m4_combine([ ], [[]], [-l], libs)"
+          LIBS="$cl_libs $opencl_save_LIBS"
+    
+          AC_LINK_IFELSE([__TN_OPENCL_PROG_CHECK_CL_V11],
+            [
+            opencl_cl_libs=$cl_libs
+            opencl_libraries_located=yes
+            ])
+	  ])
+	])
+
       AC_LANG_POP([C])
   
       CPPFLAGS=$opencl_save_CPPFLAGS
@@ -174,9 +173,6 @@ m4_define([TN_OPENCL_CHECK_LIBS_DO],
   m4_indir(m4_toupper([TN_OPENCL_CHECK_LIBS_$2_V$1]))
   ])
 
-
-TN_OPENCL_CHECK_LIBS_DEFUN([11], [NVIDIA])
-TN_OPENCL_CHECK_LIBS_DEFUN([11], [INTEL])
 
 ## MACRO
 ## ------------
@@ -309,3 +305,19 @@ m4_define([TN_OPENCL_CHECK_INTEL_V11],
         ],
       [AC_MSG_ERROR([Unable to find OpenCL framework])])
     ])
+
+
+TN_OPENCL_CHECK_HEADERS_DEFUN([11], [LINUX], 
+  [opencl.h], 
+  [cl.h])
+
+TN_OPENCL_LIB_LIST_DEFUN([11], [NVIDIA], [LINUX], 
+  [[OpenCL], [CL]])
+
+TN_OPENCL_CHECK_LIBS_DEFUN([11], [NVIDIA])
+
+
+TN_OPENCL_LIB_LIST_DEFUN([11], [INTEL], [LINUX],
+  [[intelocl, cl_logger, clang_compiler, cpu_device, OclCpuBackEnd, task_executor, tbb, tbbmalloc, tbbmalloc_proxy]])
+
+TN_OPENCL_CHECK_LIBS_DEFUN([11], [INTEL])
