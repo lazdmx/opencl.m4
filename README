@@ -1,3 +1,14 @@
+IMPORTANT
+~~~~~~~~~~~~~~
+
+This is my first draft release! There are many things to rewrite, 
+so this script will be changed soon.
+
+Today the script supports only OpenCL v1.1 of Intel and NVIDIA 
+vendors, and works with GCC.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 This package provides a set of M4 macros to use with GNU Autoconf.
 The purpose of these macros is to be able to easily find and test
 presence of OpenCL libraries and headers.
