@@ -162,7 +162,6 @@ m4_define([TN_OPENCL_CHECK_LIBS_DEFUN],
   
       CPPFLAGS=$opencl_save_CPPFLAGS
       LIBS=$opencl_save_LIBS
-      echo " Lib is $opencl_cl_libs"
       ])
       
     ])
@@ -318,6 +317,7 @@ TN_OPENCL_CHECK_LIBS_DEFUN([11], [NVIDIA])
 
 
 TN_OPENCL_LIB_LIST_DEFUN([11], [INTEL], [LINUX],
-  [[intelocl, cl_logger, clang_compiler, cpu_device, OclCpuBackEnd, task_executor, tbb, tbbmalloc, tbbmalloc_proxy]])
+dnl  [[intelocl, cl_logger, clang_compiler, cpu_device, OclCpuBackEnd, task_executor, tbb, tbbmalloc, tbbmalloc_proxy]])
+  [[OpenCL]])
 
 TN_OPENCL_CHECK_LIBS_DEFUN([11], [INTEL])
